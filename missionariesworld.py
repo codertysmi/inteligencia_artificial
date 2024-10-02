@@ -39,13 +39,14 @@ class MissionariesWorld:
 		self.final_pos = final_state.boat_position
 		
 		self.reduction_factor = (n_miss - 1) / 5 + 1
+		self.reduction_factor = int(self.reduction_factor)
 		if self.reduction_factor < 1:
 			self.reduction_factor = 1
 		self.window = Tk()
 		self.window.resizable(False, False)
 		self.window.title("Missionaries and Cannibals")
 		self.canvas = Canvas(self.window, width=1000, height=500)
-		self.cann_image = PhotoImage(file="cann.gif")
+		self.cann_image = PhotoImage(file="./img/cann.gif")
 		self.miss_image = PhotoImage(file="./img/miss.gif")
 		self.scen_image = PhotoImage(file="./img/scen.gif")
 		self.boat_image = PhotoImage(file="./img/boat.gif")

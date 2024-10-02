@@ -1,7 +1,7 @@
 from state import MissionariesState
 from missionariesworld import MissionariesWorld
 from search import *
-
+import traceback
 
 init_state = MissionariesState(3, 3, 0, 0, 'left')
 goal_state = MissionariesState(0, 0, 3, 3, 'right')
@@ -16,6 +16,7 @@ else:
     print("breadth_first failed...")
 show_solution(solution_bf, expanded, generated)
 
+
 # Depth First Search algorithm
 solution_df, expanded, generated = depth_first(init_state, goal_state)
 if solution_df != None:
@@ -24,6 +25,8 @@ else:
     print("depth_first failed...")
 show_solution(solution_df, expanded, generated)
 
+
+"""
 # Uniform Cost Search algorithm
 solution_uc, expanded, generated = uniform_cost(init_state, goal_state)
 if solution_uc != None:
@@ -50,6 +53,7 @@ else:
     print ("A* failed...")
 show_solution(solution_astar, expanded, generated)
 
+"""
 #------------------------------------------------------------
 
 # Steps for the MissionariesWorld
@@ -66,4 +70,5 @@ try:
     world = MissionariesWorld(init_state, goal_state, steps)
 except Exception as ex:
     print ("Error in MissionariesWorld -->", ex)
+    traceback.print_exc()
 

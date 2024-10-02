@@ -34,43 +34,45 @@ class Node:
 #----------------------------------------------------------------------
 
 def uninformed_search(initial_state, goal_state, frontier):
-
     """
-    Parametros:
-       initial_state: estado inicial de busqueda (objeto de clase MissionariesState)
-       goal_state: estado inicial de busqueda (objeto de clase MissionariesState)
-       frontier: estructura de datos para contener los estados de la frontera (objeto de clase
-           contenida en el modulo DataStructures)
+    Implementación de búsqueda no informada usando Graph-Search.
+    Utiliza la estructura de datos que se le pasa en 'frontier' para manejar los nodos.
     """
-
     initial_node = Node(initial_state, None, None)
-    expanded = 0
-    generated = 0
+    frontier.insert(initial_node)  # Coloca el nodo inicial en la frontera
+    explored = set()  # Conjunto de estados ya explorados
+    expanded = 0  # Contador de nodos expandidos
+    generated = 0  # Contador de nodos generados
     
-    """
-    Rellenar con el codigo necesario para realizar una busqueda no informada
-    siguiendo el pseudocodigo de los apuntes (Graph-Search)
-    La funcion debe devolver una tupla con 3 variables:
-        1. Nodo del grafo con el estado objetivo (None si no se ha alcanzado el objetivo)
-        2. Numero de nodos expandidos (expanded)
-        3. Numero de nodos generados (generated)
-    """
-    
-    return (None, expanded, generated)
-    
+    while not frontier.is_empty():
+        node = frontier.remove()  # Extrae el siguiente nodo de la frontera
+        
+        if node.state == goal_state:
+            return (node, expanded, generated)  # Si encontramos el objetivo, terminamos
+        
+        explored.add(node.state)  # Añadimos el estado a la lista de explorados
+        expanded += 1
+        
+        for child in node.expand():  # Expandimos el nodo
+            if child.state not in explored and not frontier.contains(child): 
+                frontier.insert(child)  # Añadimos el nuevo nodo a la frontera
+                generated += 1  # Contamos el nodo generado
+
+    return (None, expanded, generated)  # Si no encontramos el objetivo
+
 #----------------------------------------------------------------------
 # Test functions for uninformed search
 
 def breadth_first(initial_state, goal_state):
-    frontier = None # Indicar estructura de datos adecuada para breadth_first
+    frontier = Queue()  # Utilizar una cola para la búsqueda en anchura
     return uninformed_search(initial_state, goal_state, frontier)
 
 def depth_first(initial_state, goal_state):
-    frontier = None # Indicar estructura de datos adecuada para depth_first
+    frontier = Stack() # Indicar estructura de datos adecuada para depth_first
     return uninformed_search(initial_state, goal_state, frontier)
 
 def uniform_cost(initial_state, goal_state):
-    frontier = None # Indicar estructura de datos adecuada para uniform_cost
+    frontier = PriorityQueue() # Indicar estructura de datos adecuada para uniform_cost
     return uninformed_search(initial_state, goal_state, frontier)
 
 
@@ -92,7 +94,7 @@ def informed_search(initial_state, goal_state, frontier, heuristic):
     initial_node = Node(initial_state, None, None)
     expanded = 0
     generated = 0
-    
+
     """
     Rellenar con el codigo necesario para realizar una busqueda no informada
     siguiendo el pseudocodigo de los apuntes (Graph-Search), modificada para
@@ -134,7 +136,8 @@ def show_solution(node, expanded, generated):
         print ("Solution took %d steps" % (len(path) - 1))
         print (path[0].state)
         for n in path[1:]:
-            print ('%s %d %d' % (n.action[0], n.action[1], n.action[2]))
+            print ('%s %s %s' % (n.action[0], n.action[1], n.action[2]))
+
             print (n.state)
     print ("Nodes expanded:  %d" % expanded)
     print ("Nodes generated: %d\n" % generated)
