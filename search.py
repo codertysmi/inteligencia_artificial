@@ -39,26 +39,24 @@ def uninformed_search(initial_state, goal_state, frontier):
     Utiliza la estructura de datos que se le pasa en 'frontier' para manejar los nodos.
     """
     initial_node = Node(initial_state, None, None)
-    frontier.insert(initial_node)  # Coloca el nodo inicial en la frontera
-    explored = set()  # Conjunto de estados ya explorados
-    expanded = 0  # Contador de nodos expandidos
-    generated = 0  # Contador de nodos generados
+    frontier.insert(initial_node) 
+    explored = set() 
+    expanded = 0 
+    generated = 0 
     
     while not frontier.is_empty():
         node = frontier.remove()  # Extrae el siguiente nodo de la frontera
-        
         if node.state == goal_state:
             return (node, expanded, generated)  # Si encontramos el objetivo, terminamos
-        
-        explored.add(node.state)  # Añadimos el estado a la lista de explorados
+        explored.add(node.state) 
         expanded += 1
-        
         for child in node.expand():  # Expandimos el nodo
+            g = node.g + 1
             if child.state not in explored and not frontier.contains(child): 
                 frontier.insert(child)  # Añadimos el nuevo nodo a la frontera
-                generated += 1  # Contamos el nodo generado
+                generated += 1 
 
-    return (None, expanded, generated)  # Si no encontramos el objetivo
+    return (None, expanded, generated) 
 
 #----------------------------------------------------------------------
 # Test functions for uninformed search
@@ -68,17 +66,40 @@ def breadth_first(initial_state, goal_state):
     return uninformed_search(initial_state, goal_state, frontier)
 
 def depth_first(initial_state, goal_state):
-    frontier = Stack() # Indicar estructura de datos adecuada para depth_first
+    frontier = Stack() #Indicar estructura de datos adecuada para depth_first
     return uninformed_search(initial_state, goal_state, frontier)
 
 def uniform_cost(initial_state, goal_state):
-    frontier = PriorityQueue() # Indicar estructura de datos adecuada para uniform_cost
+    frontier = PriorityQueue(lambda x: 1) #Indicar estructura de datos adecuada para uniform_cost
     return uninformed_search(initial_state, goal_state, frontier)
 
 
 #----------------------------------------------------------------------
 
 def informed_search(initial_state, goal_state, frontier, heuristic):
+    initial_node = Node(initial_state, None, None)
+    initial_node.h = heuristic(initial_state, goal_state)
+    frontier.insert(initial_node)
+    explored = set()
+    expanded = 0
+    generated = 0
+    
+    while not frontier.is_empty():
+        node = frontier.remove()
+        if node.state == goal_state:
+            return (node, expanded, generated)
+        
+        explored.add(node.state)
+        expanded += 1
+        
+        for child in node.expand():
+            child.g = node.g + 1
+            child.h = heuristic(child.state, goal_state)
+            if child.state not in explored and not frontier.contains(child):
+                frontier.insert(child)
+                generated += 1
+
+    return (None, expanded, generated)
 
     """
     Parametros:
@@ -111,19 +132,32 @@ def informed_search(initial_state, goal_state, frontier, heuristic):
 # Test functions for informed search
 
 def greedy(initial_state, goal_state, heuristic):
-    frontier = None # Indicar estructura de datos adecuada para greedy
+    frontier = PriorityQueue(lambda node: node.h)  # La prioridad es solo la heurística
     return informed_search(initial_state, goal_state, frontier, heuristic)
 
+
 def a_star(initial_state, goal_state, heuristic):
-    frontier = None # Indicar estructura de datos adecuada para A*
-    return informed_search(initial_state, goal_state, frontier, heuristic) 
+    frontier = PriorityQueue(lambda node: node.g + node.h) 
+    return informed_search(initial_state, goal_state, frontier, heuristic)
 
 #---------------------------------------------------------------------
 # Heuristic functions
 
+"""
 def h1(current_state, goal_state):
-    return 0
-
+    people_left = current_state.miss[0] + current_state.cann[0]
+    return (people_left + current_state.capacity - 1) // current_state.capacity
+"""
+def h1(current_state, goal_state):
+    # Sumar el número de misioneros y caníbales en la orilla izquierda
+    people_left = current_state.miss[0] + current_state.cann[0]
+    
+    trips = (people_left + current_state.capacity - 1) // current_state.capacity
+    
+    if current_state.boat_position == "right" and people_left > 0:
+        trips += 1
+    
+    return trips
 
 #----------------------------------------------------------------------
 

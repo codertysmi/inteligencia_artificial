@@ -26,7 +26,7 @@ else:
 show_solution(solution_df, expanded, generated)
 
 
-"""
+
 # Uniform Cost Search algorithm
 solution_uc, expanded, generated = uniform_cost(init_state, goal_state)
 if solution_uc != None:
@@ -53,7 +53,7 @@ else:
     print ("A* failed...")
 show_solution(solution_astar, expanded, generated)
 
-"""
+
 #------------------------------------------------------------
 
 # Steps for the MissionariesWorld
